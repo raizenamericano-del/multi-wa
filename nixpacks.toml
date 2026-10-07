@@ -1,0 +1,15 @@
+# Optional alternative to the Dockerfile.
+# Railway uses the Dockerfile by default (see railway.json). If you prefer
+# Railway's Nixpacks builder, delete railway.json and keep this file.
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "openssl", "ffmpeg", "python3"]
+
+[phases.install]
+cmds = ["npm install --no-audit --no-fund"]
+
+[phases.build]
+cmds = ["node scripts/prepare-db.mjs", "npx prisma generate", "npm run build"]
+
+[start]
+cmd = "npm run start"

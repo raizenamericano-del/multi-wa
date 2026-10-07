@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.github
+.env
+.env.local
+data
+*.log
+*.zip
+README.md
+LICENSE
+.vscode
+.idea
+.DS_Store
+prisma/dev.db*
+.eslintcache

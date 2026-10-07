@@ -1,0 +1,81 @@
+// Prisma schema for WhatsApp Multi-Device Controller
+// The datasource provider is switched between "sqlite" (local dev) and
+// "postgresql" (Railway / production) automatically by scripts/prepare-db.mjs
+// based on the value of DATABASE_URL.
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model WaSession {
+  id                   String    @id @default(cuid())
+  name                 String
+  phoneNumber          String    @unique
+  status               String    @default("disconnected") // disconnected | connecting | pairing | connected | error
+  pairingCode          String?
+  pairingCodeExpiresAt DateTime?
+  pushName             String?
+  lastError            String?
+  connectedAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  chats    Chat[]
+  messages Message[]
+
+  @@map("wa_sessions")
+}
+
+model Chat {
+  id                 String   @id @default(cuid())
+  sessionId          String
+  jid                String
+  name               String?
+  isGroup            Boolean  @default(false)
+  unreadCount        Int      @default(0)
+  lastMessagePreview String?
+  lastMessageAt      DateTime @default(now())
+  pinned             Boolean  @default(false)
+  archived           Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  session  WaSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@unique([sessionId, jid])
+  @@index([sessionId, lastMessageAt])
+  @@map("chats")
+}
+
+model Message {
+  id            String   @id @default(cuid())
+  sessionId     String
+  chatId        String
+  waMessageId   String?
+  fromMe        Boolean  @default(false)
+  senderJid     String?
+  senderName    String?
+  type          String   @default("text") // text | image | video | audio | document | sticker | other
+  text          String?
+  mediaPath     String?
+  mediaMime     String?
+  mediaName     String?
+  mediaSize     Int?
+  mediaDuration Int?
+  status        String   @default("sent") // pending | sent | delivered | read | failed
+  timestamp     DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  session WaSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  chat    Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, waMessageId])
+  @@index([chatId, timestamp])
+  @@map("messages")
+}

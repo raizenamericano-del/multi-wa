@@ -1,0 +1,55 @@
+{
+  "name": "wa-multi-device-controller",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WhatsApp Multi-Device Controller \u2014 fullstack Next.js 14 + Baileys + Socket.io + Prisma",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "node scripts/prepare-db.mjs && cross-env NODE_ENV=development tsx watch --ignore \"data/**\" --ignore \".next/**\" --clear-screen=false server.ts",
+    "build": "node scripts/prepare-db.mjs && prisma generate && next build",
+    "start": "node scripts/prepare-db.mjs && prisma db push --skip-generate --accept-data-loss && cross-env NODE_ENV=production tsx server.ts",
+    "postinstall": "node scripts/prepare-db.mjs && prisma generate",
+    "db:push": "node scripts/prepare-db.mjs && prisma db push",
+    "db:studio": "prisma studio",
+    "typecheck": "tsc --noEmit",
+    "zip": "node scripts/make-zip.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "@radix-ui/react-dialog": "^1.2.0",
+    "@radix-ui/react-dropdown-menu": "^2.1.25",
+    "@radix-ui/react-slot": "^1.4.0",
+    "@whiskeysockets/baileys": "6.7.24",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cross-env": "^7.0.3",
+    "lucide-react": "^0.460.0",
+    "next": "14.2.35",
+    "pino": "^9.6.0",
+    "prisma": "^6.19.3",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "socket.io": "^4.8.4",
+    "socket.io-client": "^4.8.4",
+    "sonner": "^2.0.8",
+    "swr": "^2.5.1",
+    "tailwind-merge": "^2.6.0",
+    "tsx": "^4.23.15",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.7.2"
+  }
+}
